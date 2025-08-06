@@ -26,11 +26,6 @@ jobs:
         working-directory: app
       - run: npm run build
         working-directory: app
-      - name: Share artifact in github workflow
-        uses: actions/upload-artifact@v4
-        with:
-          name: out
-          path: app/dist
 
   deploy:
     name: Deploy app
@@ -40,12 +35,6 @@ jobs:
       # checkout repo
       - name: Checkout Repo
         uses: actions/checkout@v4
-      # Download the build artifact
-      - name: Get build artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: out
-          path: app/dist
       # Setup the AWS credentials
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1

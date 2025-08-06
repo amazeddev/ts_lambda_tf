@@ -27,10 +27,6 @@ resource "aws_lambda_function" "hello_ts_lambda" {
   role = aws_iam_role.lambda_role.arn
   handler = "dist/index.handler"
   runtime = "nodejs18.x"
-
-  provisioner "local-exec" {
-    command = "cd ../app && npm run build"
-  }
 }
 
 resource "aws_lambda_function_url" "hello_ts_lambda_url" {
