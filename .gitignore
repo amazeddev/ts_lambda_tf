@@ -1,0 +1,13 @@
+node_modules
+
+.env
+.vscode
+
+# Local .terraform directories
+**/.terraform/*
+
+# .tfstate files
+*.tfstate
+*.tfstate.*
+
+*.zip
