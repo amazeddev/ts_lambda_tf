@@ -9,6 +9,23 @@ env:
   AWS_REGION: eu-west-3
 
 jobs:
+  build:
+    name: Build app
+    runs-on: ubuntu-latest
+    steps:
+      # checkout repo
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: "npm"
+          cache-dependency-path: app/package-lock.json
+      - run: npm ci
+      - run: npm run build
+        working-directory: app
+
   deploy:
     name: Deploy app
     runs-on: ubuntu-latest
@@ -16,6 +33,12 @@ jobs:
       # checkout repo
       - name: Checkout Repo
         uses: actions/checkout@v1
+      # Download the build artifact
+      - name: Get build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: out
+          path: app/dist
       # Setup the AWS credentials
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
