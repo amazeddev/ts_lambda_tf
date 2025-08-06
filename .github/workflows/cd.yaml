@@ -1,0 +1,56 @@
+name: cd
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  AWS_REGION: eu-west-3
+
+jobs:
+  deploy:
+    name: Deploy app
+    runs-on: ubuntu-latest
+    steps:
+      # checkout repo
+      - name: Checkout Repo
+        uses: actions/checkout@v1
+      # Setup the AWS credentials
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-central-1
+      # Terraform
+      - uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_wrapper: false
+
+      - name: Terraform fmt
+        id: fmt
+        run: terraform fmt -check
+        continue-on-error: true
+        working-directory: terraform
+
+      - name: Terraform Init
+        id: init
+        run: terraform init
+        working-directory: terraform
+
+      - name: Terraform Validate
+        id: validate
+        run: terraform validate
+        working-directory: terraform
+
+      - name: Terraform Plan
+        id: plan
+        run: terraform plan -no-color
+        continue-on-error: true
+        working-directory: terraform
+
+      - name: Terraform Apply
+        id: apply
+        run: terraform apply -auto-approve -input=false
+        working-directory: terraform
